@@ -25,9 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "14"
       - name: Install
         run: npm ci
-      - name: Update gist
+      - name: fetch data
         run: node ./fetchData.js
         env:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
