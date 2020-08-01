@@ -1,8 +1,8 @@
-name: Update Gist
+name: Daily Update
 
 on:
   push:
-    branchs:
+    branches:
       - master
 
   schedule:
