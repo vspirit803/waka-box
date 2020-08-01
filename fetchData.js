@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { WakaTimeClient, RANGE } = require("wakatime-client");
+const { WakaTimeClient } = require("wakatime-client");
 const MongoClient = require("mongodb").MongoClient;
 const { WAKATIME_API_KEY: wakatimeApiKey, MONGODB_URL: url } = process.env;
 
@@ -22,27 +22,25 @@ async function main() {
     console.log(err);
   });
   const db = dbConnect.db("projectTime");
-  // const collection = db.collection("durations");
-  const date = "2020-07-30";
-  // const durationsRaw = await wakatime.getMyDurations({ date });
-  // const durations = durationsRaw.data.map(
-  //   ({ created_at, duration, id, machine_name_id, project, time }) => ({
-  //     created_at,
-  //     duration,
-  //     id,
-  //     machine_name_id,
-  //     project,
-  //     time,
-  //     date,
-  //   })
-  // );
-  // console.log(durations);
-  // if (durations && durations.length) {
-  //   db.collection("durations").insertMany(durations, function(err, res) {
-  //     if (err) throw err;
-  //     console.log("插入的durations数量为: " + res.insertedCount);
-  //   });
-  // }
+  const date = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const durationsRaw = await wakatime.getMyDurations({ date });
+  const durations = durationsRaw.data.map(
+    ({ created_at, duration, id, machine_name_id, project, time }) => ({
+      created_at,
+      duration,
+      id,
+      machine_name_id,
+      project,
+      time,
+      date
+    })
+  );
+  if (durations && durations.length) {
+    db.collection("durations").insertMany(durations, function(err, res) {
+      if (err) throw err;
+      console.log("插入的durations数量为: " + res.insertedCount);
+    });
+  }
 
   const summaryRaw = await wakatime.getMySummary({
     dateRange: { startDate: date, endDate: date }

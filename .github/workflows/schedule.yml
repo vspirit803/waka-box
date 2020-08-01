@@ -6,7 +6,7 @@ on:
       - master
 
   schedule:
-    - cron: "20 * * * *"
+    - cron: "0 6 * * *"
 
 jobs:
   update-gist:
@@ -21,3 +21,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIST_ID: 5f9cdac68c928ba27e24663980c777e8
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+  fetch-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install
+        run: npm ci
+      - name: Update gist
+        run: node ./fetchData.js
+        env:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
